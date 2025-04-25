@@ -52,3 +52,41 @@ plt.title("Linear Regression: Experience vs. Salary")
 plt.xlabel("Years of Experience")
 plt.ylabel("Salary")
 plt.show()
+
+
+
+
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score
+
+# Load dataset
+df = pd.read_csv("annotations.csv", skiprows=1, header=None)
+df.columns = ['label', 'x', 'y', 'w', 'h', 'filename', 'img_w', 'img_h']
+
+# Drop filename column
+df = df.drop(columns=['filename'])
+
+# Encode labels to numbers
+le = LabelEncoder()
+df['label'] = le.fit_transform(df['label'])
+
+# Separate features and labels
+X = df[['x', 'y', 'w', 'h', 'img_w', 'img_h']]
+y = df['label']
+
+# Train/test split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train KNN classifier
+knn = KNeighborsClassifier(n_neighbors=3)
+knn.fit(X_train, y_train)
+
+# Predict and evaluate
+y_pred = knn.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+
+print("Accuracy:", accuracy)
+
